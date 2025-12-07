@@ -1,4 +1,4 @@
-# AlphaSimR 2.0.0.9003
+# AlphaSimR 2.1.0
 
 *changed R6 and methods from Depends to Imports to match current best practices for R packages
 
@@ -11,6 +11,8 @@
 *changed `popVar` to an R wrapper to automate casting of vectors to matrices
 
 *warn when misc lists don't match in length or names in `c(pop, pop2)`
+
+*corrected bibliography entry month from sept to sep
 
 # AlphaSimR 2.0.0
 
