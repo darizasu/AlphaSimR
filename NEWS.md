@@ -1,3 +1,5 @@
+TODO mention all the MultiPop additions!
+
 *fixed bug in `getGvE` with multiple traits.
 
 # AlphaSimR 2.1.0
