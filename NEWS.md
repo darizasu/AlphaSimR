@@ -1,3 +1,5 @@
+TODO mention all the MultiPop additions!
+
 # AlphaSimR 2.0.0
 
 *added names to `SP$recHist`
