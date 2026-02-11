@@ -661,13 +661,13 @@ newPop = function(rawPop,simParam=NULL,...){
   if(is.null(simParam)){
     simParam = get("SP",envir=.GlobalEnv)
   }
-  
+
   stopifnot(sapply(simParam$genMap,length)==rawPop@nLoci)
-  
+
   lastId = simParam$lastId
   iid = seq_len(rawPop@nInd) + lastId
   lastId = max(iid)
-  
+
   if(is.null(id)){
     if(is(rawPop, "NamedMapPop")){
       id = rawPop@id
@@ -675,15 +675,15 @@ newPop = function(rawPop,simParam=NULL,...){
       id = as.character(iid)
     }
   }
-  
+
   if(is.null(iMother)){
     iMother = rep(0L, rawPop@nInd)
   }
-  
+
   if(is.null(iFather)){
     iFather = rep(0L, rawPop@nInd)
   }
-  
+
   if(is.null(isDH)){
     if(is(rawPop, "MapPop")){
       isDH = rawPop@inbred
@@ -691,7 +691,7 @@ newPop = function(rawPop,simParam=NULL,...){
       isDH = FALSE
     }
   }
-  
+
   if(is.null(mother)){
     if(is(rawPop, "NamedMapPop")){
       mother = rawPop@mother
@@ -699,7 +699,7 @@ newPop = function(rawPop,simParam=NULL,...){
       mother = rep("0", rawPop@nInd)
     }
   }
-  
+
   if(is.null(father)){
     if(is(rawPop, "NamedMapPop")){
       father = rawPop@father
@@ -707,10 +707,10 @@ newPop = function(rawPop,simParam=NULL,...){
       father = rep("0", rawPop@nInd)
     }
   }
-  
+
   stopifnot(length(id)==length(mother),
             length(id)==length(father))
-  
+
   if(simParam$sexes=="no"){
     sex = rep("H", rawPop@nInd)
   }else if(simParam$sexes=="yes_rand"){
@@ -720,24 +720,24 @@ newPop = function(rawPop,simParam=NULL,...){
   }else{
     stop(paste("no rules for sex type", simParam$sexes))
   }
-  
+
   gxe = vector("list", simParam$nTraits)
-  
+
   gv = matrix(NA_real_,nrow=rawPop@nInd,
               ncol=simParam$nTraits)
   colnames(gv) = rep(NA_character_, simParam$nTraits)
   pheno = gv
-  
+
   if(simParam$nTraits>=1){
     tmp = getGvIndex(rawPop, simParam$traits, simParam$activeQtl,
                      simParam$qtlIndex, simParam$nTraits, simParam$nThreads)
-    
+
     gv = tmp[[1]]
     colnames(gv) = simParam$traitNames
-    
+
     gxeTmp = tmp[[2]]
     dim(gxeTmp) = NULL # Account for matrix bug in RcppArmadillo
-    
+
     # Move over gxeTmp for traits with GxE
     for(i in seq_len(simParam$nTraits)){
       if(.hasSlot(simParam$traits[[i]], "gxeEff")){
@@ -745,7 +745,7 @@ newPop = function(rawPop,simParam=NULL,...){
       }
     }
   }
-  
+
   output = new("Pop",
                nInd=rawPop@nInd,
                nChr=rawPop@nChr,
@@ -770,7 +770,7 @@ newPop = function(rawPop,simParam=NULL,...){
                           dimnames = list(NULL, NULL))
                # No dimnames for EBV to make it user-flexible and
                # avoid rbind() adding them later in merging populations
-  )
+               )
   if(simParam$nTraits>=1){
     output = setPheno(output, varE=NULL, reps=1,
                       fixEff=1L, p=NULL, onlyPheno=FALSE,
@@ -824,10 +824,10 @@ resetPop = function(pop,simParam=NULL){
     simParam = get("SP",envir=.GlobalEnv)
   }
   pop@nTraits = simParam$nTraits
-  
+
   # Extract names to add back at the end
   traitNames = colnames(pop@gv)
-  
+
   # Create empty slots for traits
   pop@pheno = matrix(NA_real_,
                      nrow=pop@nInd,
@@ -842,7 +842,7 @@ resetPop = function(pop,simParam=NULL){
   pop@gv = matrix(NA_real_,nrow=pop@nInd,
                   ncol=simParam$nTraits)
   pop@fixEff = rep(1L,pop@nInd)
-  
+
   # Calculate genetic values
   for(i in seq_len(simParam$nTraits)){
     tmp = getGv(simParam$traits[[i]],pop,simParam$nThreads)
@@ -851,10 +851,10 @@ resetPop = function(pop,simParam=NULL){
       pop@gxe[[i]] = tmp[[2]]
     }
   }
-  
+
   # Add back trait names
   colnames(pop@pheno) = colnames(pop@gv) = traitNames
-  
+
   return(pop)
 }
 
@@ -913,22 +913,22 @@ newEmptyPop = function(ploidy=2L, simParam=NULL){
   if(is.null(simParam)){
     simParam = get("SP", envir=.GlobalEnv)
   }
-  
+
   # Create 0 x nTrait matrix with trait names
   # For pheno and gv slots
   traitMat = matrix(NA_real_,
                     nrow = 0L,
                     ncol = simParam$nTraits)
-  
+
   traitNames = character(simParam$nTraits)
-  
+
   # Get trait names
   for(i in seq_len(simParam$nTraits)){
     traitNames[i] = simParam$traits[[i]]@name
   }
-  
+
   colnames(traitMat) = traitNames
-  
+
   # Create empty geno list
   nLoci = unname(sapply(simParam$genMap, length))
   geno = vector("list", simParam$nChr)
@@ -936,7 +936,7 @@ newEmptyPop = function(ploidy=2L, simParam=NULL){
     DIM1 = nLoci[i]%/%8L + (nLoci[i]%%8L > 0L)
     geno[[i]] = array(as.raw(0), dim=c(DIM1, ploidy, 0))
   }
-  
+
   output = new("Pop",
                nInd = 0L,
                nChr = simParam$nChr,
@@ -961,7 +961,7 @@ newEmptyPop = function(ploidy=2L, simParam=NULL){
                             dimnames = list(NULL, NULL))
                # No dimnames for EBV to make it user-flexible and
                # avoid rbind() adding them later in merging populations
-  )
+               )
   return(output)
 }
 
@@ -992,14 +992,14 @@ setClass("MultiPop",
 
 setValidity("MultiPop",function(object){
   errors = character()
-  # Check that all populations are valid
-  for(i in seq_len(length(object@pops))){
-    if(!validObject(object@pops[[i]]) &
-       (is(object@pops[[i]], "Pop") |
-        is(object@pops[[i]],"MultiPop"))){
-      errors = c(errors,paste("object",i,"is not a valid pop"))
+    # Check that all populations are valid
+    for(i in seq_len(length(object@pops))){
+      if(!validObject(object@pops[[i]]) &
+         (is(object@pops[[i]], "Pop") |
+                is(object@pops[[i]],"MultiPop"))){
+        errors = c(errors,paste("object",i,"is not a valid pop"))
+      }
     }
-  }
   if(length(errors)==0){
     return(TRUE)
   }else{
